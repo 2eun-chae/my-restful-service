@@ -1,16 +1,21 @@
 package kr.co.lecstudy.myrestfulservice.controller;
 
 import kr.co.lecstudy.myrestfulservice.bean.HelloWorldBean;
+import org.springframework.context.MessageSource;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PathVariable;
+import org.springframework.web.bind.annotation.RequestHeader;
 import org.springframework.web.bind.annotation.RestController;//view를 가지지않는 RESTDATA를 반환
+
+import java.util.Locale;
 
 @RestController
 public class HelloWorldController {
-    // GET
-    // URI - /hello-world
-    // @RequestMapping(method = RequestMethod.GET , path = "/hello-world")
-    //위를 더 간단히 아래처럼 작성가능
+    private MessageSource messageSource;
+
+    public HelloWorldController(MessageSource messageSource) {
+        this.messageSource = messageSource;
+    }
 
     //메소드1
    @GetMapping(path = "/hello-world")
@@ -32,4 +37,14 @@ public class HelloWorldController {
     public HelloWorldBean helloworldBeanPathVariable(@PathVariable String name){
         return new HelloWorldBean(String.format("Hello World, %s",name));
     }
-}
+
+    //다국어 처리 방법
+    @GetMapping(path = "/hello-world-internationalized")
+    public String helloWorldInternationalized(
+            @RequestHeader(name="Accept-Language", required=false)  Locale locale) {
+        return messageSource.getMessage("greeting.message", null, locale);
+    }
+
+
+    }
+
